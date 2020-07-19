@@ -10,18 +10,16 @@ const Panel = () => {
 
     const [Coords, setCoords] = useState(null)
 
-    const [StartCoords, setStartCoords] = useState(null)
-
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onStartShouldSetPanResponderCapture: () => true,
             onMoveShouldSetPanResponder: () => true,
-            onPanResponderStart: (evt) => {
-                CalcularCoordenadas(evt.nativeEvent.touches)
+            onPanResponderStart: (evt, gestureState) => {
+                CalcularCoordenadas(evt.nativeEvent.touches, gestureState)
             },
-            onPanResponderMove: (evt) => {
-                CalcularCoordenadas(evt.nativeEvent.touches)
+            onPanResponderMove: (evt, gestureState) => {
+                CalcularCoordenadas(evt.nativeEvent.touches, gestureState)
             },
             onPanResponderRelease: () => {
                 Stop()
@@ -33,29 +31,30 @@ const Panel = () => {
     ).current
 
     const Stop = () => {
+        console.log(Coords)
+        /*if(GS.numberActiveTouches === 1  && Math.abs(GS.dx) < 10 && Math.abs(GS.dy) < 10){
+           axios.post('http://192.168.0.23:5000/click')
+        }*/
         setCoords(null)
-        setStartCoords(null)
-        axios.post('http://192.168.0.23:5000/stop')
     }
 
-    const CalcularCoordenadas = Array => {
-        if(!StartCoords){
-            setStartCoords(true)
-            const Obj = {
-                x: Array[0].locationX / PanelWidth,
-                y: Array[0].locationY / PanelHeight
+    const CalcularCoordenadas = (Array, GS) => {
+        if (GS.numberActiveTouches === 1) {
+            const Touch = {
+                x: GS.dx / PanelWidth,
+                y: GS.dy / PanelHeight
             }
-            axios.post('http://192.168.0.23:5000/start', Obj)
+            setCoords(Touch)
+            axios.post('http://192.168.0.23:5000/move', Touch)
         }
-        let Touches = []
-        for (let i in Array) {
+        /*for (let i in Array) {
             Touches.push({
                 x: Array[i].locationX / PanelWidth,
                 y: Array[i].locationY / PanelHeight
             })
         }
         axios.post('http://192.168.0.23:5000/api', Touches)
-        setCoords(Touches)
+        setCoords(Touches)*/
     }
 
     return (
