@@ -10,6 +10,8 @@ const Panel = () => {
 
     const [Coords, setCoords] = useState(null)
 
+    const [Counter, setCounter] = useState(0)
+
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -31,35 +33,31 @@ const Panel = () => {
     ).current
 
     const Stop = () => {
-        console.log(Coords)
-        /*if(GS.numberActiveTouches === 1  && Math.abs(GS.dx) < 10 && Math.abs(GS.dy) < 10){
-           axios.post('http://192.168.0.23:5000/click')
-        }*/
         setCoords(null)
+        axios.post('http://192.168.0.23:5000/stop')
     }
 
     const CalcularCoordenadas = (Array, GS) => {
-        if (GS.numberActiveTouches === 1) {
+        if (GS.numberActiveTouches === 1 && Array[0].timestamp % 2 === 0) {
             const Touch = {
                 x: GS.dx / PanelWidth,
                 y: GS.dy / PanelHeight
             }
             setCoords(Touch)
-            axios.post('http://192.168.0.23:5000/move', Touch)
+            if (GS.x0 > PanelWidth * 0.9) {
+                axios.post('http://192.168.0.23:5000/scroll', Touch)
+                console.log('asd')
+            } else {
+                axios.post('http://192.168.0.23:5000/move', Touch)
+            }
         }
-        /*for (let i in Array) {
-            Touches.push({
-                x: Array[i].locationX / PanelWidth,
-                y: Array[i].locationY / PanelHeight
-            })
-        }
-        axios.post('http://192.168.0.23:5000/api', Touches)
-        setCoords(Touches)*/
+
     }
 
     return (
         <View {...panResponder.panHandlers} style={styles.touch}>
             <Text>{JSON.stringify(Coords)}</Text>
+            <Text>{JSON.stringify(Counter)}</Text>
         </View>
     )
 }
@@ -68,7 +66,7 @@ const styles = StyleSheet.create({
     touch: {
         width: PanelWidth,
         height: PanelHeight,
-        backgroundColor: 'white'
+        backgroundColor: '#666666'
     }
 })
 

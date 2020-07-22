@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import TouchablePanel from './components/TouchablePanel'
 import Panel from './components/Panel'
+import Boton from './components/Boton'
 
 export default function App() {
 
@@ -10,6 +11,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Panel />
+      <Boton />
     </View>
   );
 }
@@ -17,8 +19,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'gray',
+    backgroundColor: '#4d4d4d',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   }
 });
